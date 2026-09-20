@@ -1,0 +1,139 @@
+:root {
+    --bg-dark: #07070e;
+    --primary-yellow: #f4d03f;
+    --primary-glow: rgba(244, 208, 63, 0.35);
+    --glass-bg: rgba(18, 18, 32, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-border-hover: rgba(244, 208, 63, 0.5);
+    --text-main: #f8f9fa;
+    --text-muted: #a0a5b5;
+    --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Normalización de botones e inputs */
+button, input {
+    font-family: inherit;
+    touch-action: manipulation;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Canvas de fondo espacial */
+#fondo-espacial {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Barra de Navegación */
+.navbar {
+    position: relative;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 3rem;
+    background: rgba(10, 10, 20, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--text-main);
+    text-decoration: none;
+}
+
+.logo-icon {
+    font-size: 1.5rem;
+}
+
+.nav-links {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-nav {
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.6rem 1.2rem;
+    border-radius: 30px;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.btn-nav:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.btn-nav.active {
+    background: var(--primary-yellow);
+    color: #000;
+    font-weight: 700;
+    box-shadow: 0 0 20px var(--primary-glow);
+}
+
+/* Contenedor General de Vistas */
+.contenedor-vista {
+    position: relative;
+    z-index: 10;
+    padding: 3rem 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.section-title h2 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.section-title p {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+}
+
+/* Adaptación Móvil */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 1rem 1.5rem;
+    }
+    .btn-nav {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+    }
+}

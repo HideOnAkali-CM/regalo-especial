@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juegos - Espacio Especial</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Rutas CSS relativas hacia ../css/ -->
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/juegos.css">
+</head>
+<body>
+    <canvas id="fondo-espacial"></canvas>
+
+    <header class="navbar">
+        <a href="../index.html" class="logo">
+            <span class="logo-icon">💐</span>
+            <span class="logo-text">Espacio Especial</span>
+        </a>
+        <nav class="nav-links">
+            <a href="../index.html" class="btn-nav">Inicio</a>
+            <a href="juegos.html" class="btn-nav active">Juegos</a>
+            <a href="recuerdos.html" class="btn-nav">Recuerdos</a>
+        </nav>
+    </header>
+
+    <main class="contenedor-vista">
+        <div class="juego-header">
+            <h2>Zona de Juegos 🎮</h2>
+            <p>Selecciona un juego para empezar a divertirte:</p>
+            
+            <div class="selector-juegos">
+                <button id="btn-tab-rompecabezas" class="tab-btn active">🧩 Rompecabezas</button>
+                <button id="btn-tab-memoria" class="tab-btn">🧠 Memoria</button>
+                <button id="btn-tab-reflejos" class="tab-btn">✨ Atrapa Flores</button>
+            </div>
+        </div>
+
+        <!-- 1. JUEGO: ROMPECABEZAS -->
+        <section id="juego-rompecabezas" class="panel-juego activo">
+            <div class="contenedor-juego">
+                <div class="tablero-puzzle" id="tablero"></div>
+            </div>
+            <div id="contenedor-piezas-libres"></div>
+            <div class="controles">
+                <button id="btn-reiniciar-puzzle" class="btn-primary">Reiniciar Rompecabezas</button>
+            </div>
+        </section>
+
+        <!-- 2. JUEGO: MEMORIA -->
+        <section id="juego-memoria" class="panel-juego">
+            <div class="stats-juego">
+                <span>Movimientos: <strong id="movimientos-memoria">0</strong></span>
+                <span>Pares encontrados: <strong id="pares-memoria">0 / 6</strong></span>
+            </div>
+            <div class="grid-memoria" id="grid-memoria"></div>
+            <div class="controles">
+                <button id="btn-reiniciar-memoria" class="btn-primary">Reiniciar Memoria</button>
+            </div>
+        </section>
+
+        <!-- 3. JUEGO: ATRAPA FLORES -->
+        <section id="juego-reflejos" class="panel-juego">
+            <div class="stats-juego">
+                <span>Puntuación: <strong id="score-reflejos">0</strong></span>
+                <span>Tiempo: <strong id="tiempo-reflejos">20</strong>s</span>
+            </div>
+            <div class="area-reflejos" id="area-reflejos">
+                <p class="instruccion-game">Haz clic en "Iniciar Juego" para atrapar la mayor cantidad de flores antes de que se acabe el tiempo.</p>
+            </div>
+            <div class="controles">
+                <button id="btn-iniciar-reflejos" class="btn-primary">Iniciar Juego</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Rutas JS relativas hacia ../js/ -->
+    <script src="../js/fondo.js"></script>
+    <script src="../js/juegos.js"></script>
+</body>
+</html>

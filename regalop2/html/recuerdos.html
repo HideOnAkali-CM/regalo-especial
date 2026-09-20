@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuerdos - Espacio Especial</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Rutas CSS relativas hacia ../css/ -->
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/recuerdos.css">
+</head>
+<body>
+    <canvas id="fondo-espacial"></canvas>
+
+    <header class="navbar">
+        <a href="../index.html" class="logo">
+            <span class="logo-icon">💐</span>
+            <span class="logo-text">Espacio Especial</span>
+        </a>
+        <nav class="nav-links">
+            <a href="../index.html" class="btn-nav">Inicio</a>
+            <a href="juegos.html" class="btn-nav">Juegos</a>
+            <a href="recuerdos.html" class="btn-nav active">Recuerdos</a>
+        </nav>
+    </header>
+
+    <main class="contenedor-vista">
+        <div class="section-title">
+            <h2>📜 Recuerdos Especiales</h2>
+            <p>Fotos para recordar y música dedicada con todo mi corazón.</p>
+        </div>
+
+        <!-- CARRUSEL DE FOTOS -->
+        <section class="seccion-carrusel">
+            <div class="carrusel-container">
+                <div class="carrusel-track" id="carrusel-track">
+                    <div class="carrusel-slide active">
+                        <img src="../fotos/fotos1.jpg" alt="Recuerdo 1">
+                        <div class="caption">Un momento especial 💛</div>
+                    </div>
+                    <div class="carrusel-slide">
+                        <img src="../fotos/fotos2.jpg" alt="Recuerdo 2">
+                        <div class="caption">Nuestra foto favorita 📸</div>
+                    </div>
+                    <div class="carrusel-slide">
+                        <img src="../fotos/fotos3.jpg" alt="Recuerdo 3">
+                        <div class="caption">Inolvidable ✨</div>
+                    </div>
+                </div>
+
+                <button class="carrusel-btn btn-prev" id="btn-prev">❮</button>
+                <button class="carrusel-btn btn-next" id="btn-next">❯</button>
+
+                <div class="carrusel-dots" id="carrusel-dots"></div>
+            </div>
+        </section>
+
+        <!-- REPRODUCTOR MP3 PERSONALIZADO -->
+        <section class="seccion-reproductor">
+            <div class="card-reproductor-alargado">
+                <div class="header-reproductor">
+                    <span class="tag-musica">🎵 Lista de Canciones Dedicadas</span>
+                    <h3>Nuestra Playlist Especial 💛</h3>
+                    <p>Canciones que tienen un significado único para nosotros</p>
+                </div>
+
+                <audio id="audio-player"></audio>
+
+                <!-- LISTA DE CANCIONES (Rutas corregidas hacia ../musica/) -->
+                <div class="lista-canciones">
+                    <div class="item-cancion active" data-src="../musica/cancion1.mp3" data-titulo="Yellow" data-artista="Coldplay" data-nota="💛 'Look at the stars, look how they shine for you...'">
+                        <div class="num-track">1</div>
+                        <div class="info-track">
+                            <span class="titulo-track">Yellow</span>
+                            <span class="artista-track">Coldplay</span>
+                        </div>
+                        <button class="btn-play-track">▶</button>
+                    </div>
+
+                    <div class="item-cancion" data-src="../musica/cancion2.mp3" data-titulo="Perfect" data-artista="Ed Sheeran" data-nota="✨ Porque cada instante contigo es perfecto.">
+                        <div class="num-track">2</div>
+                        <div class="info-track">
+                            <span class="titulo-track">Perfect</span>
+                            <span class="artista-track">Ed Sheeran</span>
+                        </div>
+                        <button class="btn-play-track">▶</button>
+                    </div>
+
+                    <div class="item-cancion" data-src="../musica/cancion3.mp3" data-titulo="Until I Found You" data-artista="Stephen Sanchez" data-nota="💐 La canción perfecta para recordarte.">
+                        <div class="num-track">3</div>
+                        <div class="info-track">
+                            <span class="titulo-track">Until I Found You</span>
+                            <span class="artista-track">Stephen Sanchez</span>
+                        </div>
+                        <button class="btn-play-track">▶</button>
+                    </div>
+                </div>
+
+                <!-- BARRA DE REPRODUCCIÓN -->
+                <div class="panel-reproduccion-abajo">
+                    <div class="contenedor-progreso">
+                        <span id="tiempo-actual">0:00</span>
+                        <input type="range" id="barra-progreso" value="0" min="0" max="100">
+                        <span id="tiempo-total">0:00</span>
+                    </div>
+
+                    <div class="sub-bar-controles">
+                        <div class="contenedor-volumen">
+                            <span id="icono-volumen" class="icono-vol">🔊</span>
+                            <input type="range" id="control-volumen" value="100" min="0" max="100">
+                        </div>
+                    </div>
+
+                    <div class="mensaje-dedicatoria">
+                        <p id="texto-dedicatoria">"💛 'Look at the stars, look how they shine for you...'"</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Rutas JS relativas hacia ../js/ -->
+    <script src="../js/fondo.js"></script>
+    <script src="../js/carrusel.js"></script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+/* CARRUSEL DE FOTOS */
+.seccion-carrusel {
+    display: flex;
+    justify-content: center;
+    padding: 1rem 0 2.5rem 0;
+    width: 100%;
+}
+
+.carrusel-container {
+    position: relative;
+    width: 100%;
+    max-width: 650px;
+    height: 420px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 25px var(--primary-glow);
+}
+
+.carrusel-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.carrusel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.carrusel-slide.active {
+    opacity: 1;
+    z-index: 2;
+}
+
+.carrusel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.caption {
+    position: relative;
+    z-index: 3;
+    padding: 1.5rem;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+    color: var(--text-main);
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.carrusel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(10, 10, 20, 0.6);
+    border: 1px solid var(--glass-border);
+    color: var(--primary-yellow);
+    font-size: 1.5rem;
+    padding: 0.8rem 1rem;
+    cursor: pointer;
+    border-radius: 50%;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.carrusel-btn:hover {
+    background: var(--primary-yellow);
+    color: #000;
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.btn-prev { left: 15px; }
+.btn-next { right: 15px; }
+
+.carrusel-dots {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    background: var(--primary-yellow);
+    width: 25px;
+    border-radius: 10px;
+}
+
+/* REPRODUCTOR ALARGADO (PLAYLIST) */
+.seccion-reproductor {
+    display: flex;
+    justify-content: center;
+    padding: 1rem 0 3rem 0;
+    width: 100%;
+}
+
+.card-reproductor-alargado {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 800px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 30px var(--primary-glow);
+}
+
+.header-reproductor {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.header-reproductor h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-top: 0.4rem;
+}
+
+.header-reproductor p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.tag-musica {
+    display: inline-block;
+    background: rgba(244, 208, 63, 0.15);
+    color: var(--primary-yellow);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+}
+
+.lista-canciones {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+}
+
+.item-cancion {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 1rem 1.2rem;
+    background: rgba(10, 10, 20, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.item-cancion:hover {
+    background: rgba(244, 208, 63, 0.08);
+    border-color: rgba(244, 208, 63, 0.3);
+    transform: translateX(4px);
+}
+
+.item-cancion.active {
+    background: rgba(244, 208, 63, 0.15);
+    border-color: var(--primary-yellow);
+    box-shadow: 0 0 15px rgba(244, 208, 63, 0.2);
+}
+
+.num-track {
+    font-weight: 700;
+    color: var(--primary-yellow);
+    font-size: 1.1rem;
+    width: 24px;
+    text-align: center;
+}
+
+.info-track {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    text-align: left;
+}
+
+.titulo-track {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--text-main);
+}
+
+.artista-track {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.btn-play-track {
+    background: var(--primary-yellow);
+    border: none;
+    color: #000;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.panel-reproduccion-abajo {
+    border-top: 1px solid var(--glass-border);
+    padding-top: 1.5rem;
+}
+
+.contenedor-progreso {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.contenedor-progreso input[type="range"] {
+    flex: 1;
+    accent-color: var(--primary-yellow);
+    cursor: pointer;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 5px;
+}
+
+.sub-bar-controles {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1.2rem;
+}
+
+.contenedor-volumen {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    width: 180px;
+}
+
+.icono-vol {
+    font-size: 1.1rem;
+    cursor: pointer;
+    user-select: none;
+    color: var(--primary-yellow);
+}
+
+.contenedor-volumen input[type="range"] {
+    flex: 1;
+    accent-color: var(--primary-yellow);
+    cursor: pointer;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 5px;
+}
+
+.mensaje-dedicatoria {
+    background: rgba(10, 10, 20, 0.5);
+    border-radius: 14px;
+    padding: 1.2rem 1.5rem;
+    border: 1px dashed rgba(244, 208, 63, 0.3);
+    text-align: center;
+}
+
+.mensaje-dedicatoria p {
+    color: var(--primary-yellow);
+    font-style: italic;
+    font-size: 0.98rem;
+    line-height: 1.5;
+}

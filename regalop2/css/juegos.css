@@ -1,0 +1,233 @@
+/* SECCIÓN Y PESTAÑAS DE JUEGOS */
+.juego-header {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.juego-header h2 {
+    font-size: 2rem;
+    margin-bottom: 0.4rem;
+}
+
+.juego-header p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.selector-juegos {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--text-muted);
+    padding: 0.6rem 1.2rem;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.tab-btn.active {
+    background: var(--primary-yellow);
+    color: #000;
+    border-color: var(--primary-yellow);
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.panel-juego {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.panel-juego.activo {
+    display: flex;
+}
+
+.stats-juego {
+    display: flex;
+    gap: 2rem;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-muted);
+}
+
+.stats-juego strong {
+    color: var(--primary-yellow);
+}
+
+/* JUEGO 1: ROMPECABEZAS */
+.contenedor-juego {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+    min-height: 380px;
+}
+
+.tablero-puzzle {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 3px;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 8px;
+    border-radius: 16px;
+    border: 2px solid var(--primary-yellow);
+    box-shadow: 0 0 35px var(--primary-glow);
+}
+
+.espacio-puzzle {
+    width: 100px;
+    height: 100px;
+    background-color: rgba(10, 10, 20, 0.8);
+    border: 1px dashed rgba(244, 208, 63, 0.3);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.pieza-puzzle {
+    position: fixed;
+    z-index: 20;
+    width: 100px;
+    height: 100px;
+    background-image: url('flores-amarillas.jpg');
+    background-size: 300px 300px;
+    cursor: grab;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+    will-change: transform;
+}
+
+.pieza-puzzle:hover {
+    transform: scale(1.18) !important;
+    z-index: 40;
+    box-shadow: 0 0 30px var(--primary-yellow);
+    transition: transform 0.25s ease;
+}
+
+.espacio-puzzle .pieza-puzzle {
+    position: static !important;
+    animation: none !important;
+    transform: none !important;
+    box-shadow: none;
+    border-radius: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.controles {
+    padding: 2rem;
+    text-align: center;
+}
+
+.btn-primary {
+    padding: 0.9rem 2rem;
+    font-size: 1rem;
+    font-weight: 700;
+    background-color: var(--primary-yellow);
+    color: #000;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 0 20px var(--primary-glow);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px var(--primary-yellow);
+    background-color: #fff;
+}
+
+/* JUEGO 2: MEMORIA */
+.grid-memoria {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    max-width: 500px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.carta-memoria {
+    aspect-ratio: 1;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+}
+
+.carta-memoria:hover {
+    border-color: var(--primary-yellow);
+    transform: scale(1.03);
+}
+
+.carta-memoria.revelada {
+    background: rgba(244, 208, 63, 0.2);
+    border-color: var(--primary-yellow);
+}
+
+.carta-memoria.emparejada {
+    background: rgba(46, 204, 113, 0.2);
+    border-color: #2ecc71;
+    cursor: default;
+}
+
+/* JUEGO 3: ATRAPA FLORES */
+.area-reflejos {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    height: 350px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.instruccion-game {
+    color: var(--text-muted);
+    text-align: center;
+    padding: 2rem;
+}
+
+.item-reflejo {
+    position: absolute;
+    font-size: 2.2rem;
+    cursor: pointer;
+    user-select: none;
+    animation: aparecer 0.2s ease-out;
+    transition: transform 0.1s ease;
+}
+
+.item-reflejo:active {
+    transform: scale(1.3);
+}
+
+@keyframes aparecer {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+}
