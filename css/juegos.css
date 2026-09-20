@@ -56,25 +56,145 @@
     display: flex;
 }
 
-.stats-juego {
+/* SELECCIÓN Y VISTA PREVIA DE FOTOS */
+.pantalla-seleccion {
     display: flex;
-    gap: 2rem;
-    font-size: 1.1rem;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.instruccion-seleccion {
+    color: var(--text-muted);
+    font-size: 1.05rem;
     margin-bottom: 1.5rem;
+}
+
+.grid-previsualizacion {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.tarjeta-foto {
+    background: var(--glass-bg);
+    border: 2px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    transition: all 0.3s ease;
+    width: 160px;
+}
+
+.tarjeta-foto .thumb-wrapper {
+    width: 100%;
+    height: 130px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.tarjeta-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.tarjeta-foto span {
+    font-size: 0.95rem;
+    font-weight: 600;
     color: var(--text-muted);
 }
 
-.stats-juego strong {
+.tarjeta-foto:hover {
+    transform: translateY(-5px);
+    border-color: rgba(244, 208, 63, 0.5);
+}
+
+.tarjeta-foto:hover img {
+    transform: scale(1.05);
+}
+
+.tarjeta-foto.active {
+    border-color: var(--primary-yellow);
+    box-shadow: 0 0 25px var(--primary-glow);
+    background: rgba(244, 208, 63, 0.1);
+}
+
+.tarjeta-foto.active span {
     color: var(--primary-yellow);
 }
 
-/* JUEGO 1: ROMPECABEZAS */
+.btn-iniciar-puzzle {
+    font-size: 1.1rem;
+    padding: 1rem 2.5rem;
+}
+
+/* PANTALLA JUGANDO ROMPECABEZAS */
+.pantalla-juego-activa {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header-puzzle-jugando {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 1rem;
+    padding: 0 0.5rem;
+}
+
+.btn-secundario {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--glass-border);
+    color: var(--text-muted);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-secundario:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.preview-mini-contenedor {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.preview-mini-contenedor img {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--primary-yellow);
+}
+
+/* TABLERO PUZZLE */
 .contenedor-juego {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 2rem 1rem;
-    min-height: 380px;
+    padding: 1rem;
+    min-height: 350px;
 }
 
 .tablero-puzzle {
@@ -103,8 +223,6 @@
     z-index: 20;
     width: 100px;
     height: 100px;
-    background-image: url('flores-amarillas.jpg');
-    background-size: 300px 300px;
     cursor: grab;
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 12px;
@@ -130,7 +248,7 @@
 }
 
 .controles {
-    padding: 2rem;
+    padding: 1.5rem;
     text-align: center;
 }
 
@@ -154,6 +272,18 @@
 }
 
 /* JUEGO 2: MEMORIA */
+.stats-juego {
+    display: flex;
+    gap: 2rem;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-muted);
+}
+
+.stats-juego strong {
+    color: var(--primary-yellow);
+}
+
 .grid-memoria {
     display: grid;
     grid-template-columns: repeat(4, 1fr);

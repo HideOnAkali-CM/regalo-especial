@@ -19,9 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tabs[nombre]) tabs[nombre].classList.add('active');
         if (paneles[nombre]) paneles[nombre].classList.add('activo');
 
-        if (nombre === 'puzzle') {
-            iniciarPuzzle();
-        } else {
+        if (nombre !== 'puzzle') {
             detenerFisicaPuzzle();
             const contenedorPiezas = document.getElementById('contenedor-piezas-libres');
             if (contenedorPiezas) contenedorPiezas.innerHTML = '';
@@ -38,25 +36,61 @@ document.addEventListener('DOMContentLoaded', () => {
     if (tabs.reflejos) tabs.reflejos.addEventListener('click', () => activarTab('reflejos'));
 
 
-    // --- 2. JUEGO 1: ROMPECABEZAS ---
+    // --- 2. JUEGO 1: ROMPECABEZAS CON VISTA PREVIA ---
     const tablero = document.getElementById('tablero');
     const contenedorPiezasLibres = document.getElementById('contenedor-piezas-libres');
     const btnReiniciarPuzzle = document.getElementById('btn-reiniciar-puzzle');
+    const tarjetasFoto = document.querySelectorAll('.tarjeta-foto');
+    const btnComenzarPuzzle = document.getElementById('btn-comenzar-puzzle');
+    const btnCambiarFoto = document.getElementById('btn-cambiar-foto');
+    const fotoGuiaMini = document.getElementById('foto-guia-mini');
+
+    const pantallaSeleccion = document.getElementById('pantalla-seleccion-puzzle');
+    const pantallaJuego = document.getElementById('pantalla-juego-puzzle');
 
     const FILAS = 3, COLUMNAS = 3, TAMANO_PIEZA = 100;
     let piezasFlotantes = [];
     let animacionFisicaFrame = null;
     let piezaSiendoArrastrada = null;
+    let fotoSeleccionada = '../fotos/fotos1.jpg'; // Foto por defecto
+
+    // Selección visual de tarjetas de fotos
+    tarjetasFoto.forEach(tarjeta => {
+        tarjeta.addEventListener('click', () => {
+            tarjetasFoto.forEach(t => t.classList.remove('active'));
+            tarjeta.classList.add('active');
+            fotoSeleccionada = tarjeta.dataset.foto;
+        });
+    });
+
+    // Iniciar el rompecabezas tras confirmar la foto
+    if (btnComenzarPuzzle) {
+        btnComenzarPuzzle.addEventListener('click', () => {
+            if (pantallaSeleccion) pantallaSeleccion.style.display = 'none';
+            if (pantallaJuego) pantallaJuego.style.display = 'flex';
+            if (fotoGuiaMini) fotoGuiaMini.src = fotoSeleccionada;
+            iniciarPuzzle();
+        });
+    }
+
+    // Regresar al menú de selección de fotos
+    if (btnCambiarFoto) {
+        btnCambiarFoto.addEventListener('click', () => {
+            detenerFisicaPuzzle();
+            if (contenedorPiezasLibres) contenedorPiezasLibres.innerHTML = '';
+            if (pantallaJuego) pantallaJuego.style.display = 'none';
+            if (pantallaSeleccion) pantallaSeleccion.style.display = 'flex';
+        });
+    }
 
     function iniciarPuzzle() {
-        if (!tablero || !contenedorPiezasLibres) return;
+        if (!fotoSeleccionada || !tablero || !contenedorPiezasLibres) return;
 
         detenerFisicaPuzzle();
         tablero.innerHTML = '';
         contenedorPiezasLibres.innerHTML = '';
         piezasFlotantes = [];
 
-        // Drag & Drop para PC
         document.body.ondragover = (e) => e.preventDefault();
         document.body.ondrop = (e) => {
             e.preventDefault();
@@ -68,7 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        // Crear casillas del tablero
         for (let i = 0; i < FILAS * COLUMNAS; i++) {
             const espacio = document.createElement('div');
             espacio.classList.add('espacio-puzzle');
@@ -78,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
             tablero.appendChild(espacio);
         }
 
-        // Crear piezas del puzzle
         for (let i = 0; i < FILAS * COLUMNAS; i++) {
             const pieza = document.createElement('div');
             pieza.classList.add('pieza-puzzle');
@@ -89,18 +121,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const fila = Math.floor(i / COLUMNAS);
             const columna = i % COLUMNAS;
             
-            // Asignar fondo relativo a visual/fotos/
-            pieza.style.backgroundImage = 'url("../fotos/fotos1.jpg")';
+            pieza.style.backgroundImage = `url("${fotoSeleccionada}")`;
             pieza.style.backgroundSize = `${COLUMNAS * TAMANO_PIEZA}px ${FILAS * TAMANO_PIEZA}px`;
             pieza.style.backgroundPosition = `${-columna * TAMANO_PIEZA}px ${-fila * TAMANO_PIEZA}px`;
 
-            // Eventos PC
             pieza.addEventListener('dragstart', () => {
                 piezaSiendoArrastrada = pieza;
                 piezasFlotantes = piezasFlotantes.filter(p => p.element !== pieza);
             });
 
-            // Eventos Táctiles (Smartphones/Tablets)
             pieza.addEventListener('touchstart', (e) => handleTouchStart(e, pieza), { passive: false });
             pieza.addEventListener('touchmove', handleTouchMove, { passive: false });
             pieza.addEventListener('touchend', (e) => handleTouchEnd(e, pieza));
@@ -114,7 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loopFisica();
     }
 
-    // Lógica Táctil para Dispositivos Móviles
     let touchOffset = { x: 0, y: 0 };
 
     function handleTouchStart(e, pieza) {
@@ -248,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (completado) {
             detenerFisicaPuzzle();
-            setTimeout(() => alert('¡Felicitaciones! Armaste el ramo de flores amarillas. 💐💛'), 100);
+            setTimeout(() => alert('¡Felicitaciones! Armaste la imagen correctamente. 💐💛'), 100);
         }
     }
 
@@ -419,7 +447,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (btnIniciarReflejos) btnIniciarReflejos.addEventListener('click', iniciarReflejos);
-
-    // Inicialización al cargar la página
-    iniciarPuzzle();
 });

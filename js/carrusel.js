@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let currentIndex = 0;
         let autoPlayInterval = null;
 
-        // Generar puntos navegables dinámicamente
+        dotsContainer.innerHTML = '';
         slides.forEach((_, index) => {
             const dot = document.createElement('div');
             dot.classList.add('dot');
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // --- 2. LÓGICA DE PLAYLIST Y REPRODUCTOR MP3 ---
+    // --- 2. REPRODUCTOR MP3 LOCAL ---
     const audio = document.getElementById('audio-player');
     const itemsCancion = document.querySelectorAll('.item-cancion');
     const barraProgreso = document.getElementById('barra-progreso');
@@ -68,8 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const txtDedicatoria = document.getElementById('texto-dedicatoria');
     const controlVolumen = document.getElementById('control-volumen');
     const iconoVolumen = document.getElementById('icono-volumen');
-
-    if (!audio || !itemsCancion.length) return;
 
     let cancionActualIndex = 0;
 
@@ -91,15 +89,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (txtDedicatoria) txtDedicatoria.textContent = nota || "";
 
-        // Verificación precisa del origen de audio
         if (!audio.src.endsWith(src)) {
             audio.src = src;
         }
 
-        // Promesa para manejar políticas de reproducción en navegadores
-        audio.play().catch(error => {
-            console.warn("La reproducción automática fue bloqueada o interrumpida:", error);
-        });
+        audio.play().catch(error => console.warn("Autoplay bloqueado:", error));
     }
 
     itemsCancion.forEach((item, index) => {
@@ -122,14 +116,21 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${min}:${seg < 10 ? '0' : ''}${seg}`;
     }
 
-    audio.addEventListener('timeupdate', () => {
-        if (audio.duration && barraProgreso) {
-            const porcentaje = (audio.currentTime / audio.duration) * 100;
-            barraProgreso.value = porcentaje;
-            if (txtTiempoActual) txtTiempoActual.textContent = formatearTiempo(audio.currentTime);
-            if (txtTiempoTotal) txtTiempoTotal.textContent = formatearTiempo(audio.duration);
-        }
-    });
+    if (audio) {
+        audio.addEventListener('timeupdate', () => {
+            if (audio.duration && barraProgreso) {
+                const porcentaje = (audio.currentTime / audio.duration) * 100;
+                barraProgreso.value = porcentaje;
+                if (txtTiempoActual) txtTiempoActual.textContent = formatearTiempo(audio.currentTime);
+                if (txtTiempoTotal) txtTiempoTotal.textContent = formatearTiempo(audio.duration);
+            }
+        });
+
+        audio.addEventListener('ended', () => {
+            cancionActualIndex = (cancionActualIndex + 1) % itemsCancion.length;
+            cargarYReproducir(cancionActualIndex);
+        });
+    }
 
     if (barraProgreso) {
         barraProgreso.addEventListener('input', () => {
@@ -139,23 +140,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Corrección del bug de variable (val vs valor)
     if (controlVolumen) {
         controlVolumen.addEventListener('input', (e) => {
             const val = parseFloat(e.target.value);
-            audio.volume = val / 100;
+            if (audio) audio.volume = val / 100;
             
             if (iconoVolumen) {
                 if (val === 0) iconoVolumen.textContent = "🔇";
-                else if (val < 50) iconoVolumen.textContent = "🔉";
+                else if (val < 50) iconoVolumen.textContent = "m🔉";
                 else iconoVolumen.textContent = "🔊";
             }
         });
     }
-
-    // Siguiente canción automática al terminar
-    audio.addEventListener('ended', () => {
-        cancionActualIndex = (cancionActualIndex + 1) % itemsCancion.length;
-        cargarYReproducir(cancionActualIndex);
-    });
 });
