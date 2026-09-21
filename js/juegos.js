@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const pantallaSeleccion = document.getElementById('pantalla-seleccion-puzzle');
     const pantallaJuego = document.getElementById('pantalla-juego-puzzle');
 
-    const FILAS = 3, COLUMNAS = 3, TAMANO_PIEZA = 100;
+    const FILAS = 3, COLUMNAS = 3;
     let piezasFlotantes = [];
     let animacionFisicaFrame = null;
     let piezaSiendoArrastrada = null;
@@ -63,7 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Iniciar el rompecabezas tras confirmar la foto
     if (btnComenzarPuzzle) {
         btnComenzarPuzzle.addEventListener('click', () => {
             if (pantallaSeleccion) pantallaSeleccion.style.display = 'none';
@@ -73,7 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Regresar al menú de selección de fotos
     if (btnCambiarFoto) {
         btnCambiarFoto.addEventListener('click', () => {
             detenerFisicaPuzzle();
@@ -95,13 +93,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.ondrop = (e) => {
             e.preventDefault();
             if (piezaSiendoArrastrada && !e.target.closest('.espacio-puzzle')) {
-                const posX = Math.max(10, Math.min(window.innerWidth - 110, e.clientX - 50));
-                const posY = Math.max(80, Math.min(window.innerHeight - 150, e.clientY - 50));
+                const posX = Math.max(10, Math.min(window.innerWidth - 90, e.clientX - 40));
+                const posY = Math.max(80, Math.min(window.innerHeight - 120, e.clientY - 40));
                 liberarPiezaConGravedad(piezaSiendoArrastrada, posX, posY);
                 piezaSiendoArrastrada = null;
             }
         };
 
+        // Crear los espacios del tablero
         for (let i = 0; i < FILAS * COLUMNAS; i++) {
             const espacio = document.createElement('div');
             espacio.classList.add('espacio-puzzle');
@@ -111,6 +110,11 @@ document.addEventListener('DOMContentLoaded', () => {
             tablero.appendChild(espacio);
         }
 
+        // Obtener el tamaño exacto del espacio en pantalla (pantallas táctiles y escritorio)
+        const primerEspacio = tablero.querySelector('.espacio-puzzle');
+        const tamanoPieza = primerEspacio ? primerEspacio.clientWidth : 80;
+
+        // Crear las piezas con escala dinámica
         for (let i = 0; i < FILAS * COLUMNAS; i++) {
             const pieza = document.createElement('div');
             pieza.classList.add('pieza-puzzle');
@@ -122,20 +126,24 @@ document.addEventListener('DOMContentLoaded', () => {
             const columna = i % COLUMNAS;
             
             pieza.style.backgroundImage = `url("${fotoSeleccionada}")`;
-            pieza.style.backgroundSize = `${COLUMNAS * TAMANO_PIEZA}px ${FILAS * TAMANO_PIEZA}px`;
-            pieza.style.backgroundPosition = `${-columna * TAMANO_PIEZA}px ${-fila * TAMANO_PIEZA}px`;
+            pieza.style.backgroundSize = `${COLUMNAS * tamanoPieza}px ${FILAS * tamanoPieza}px`;
+            pieza.style.backgroundPosition = `${-columna * tamanoPieza}px ${-fila * tamanoPieza}px`;
+            pieza.style.width = `${tamanoPieza}px`;
+            pieza.style.height = `${tamanoPieza}px`;
 
+            // Arrastre en Mouse / Desktop
             pieza.addEventListener('dragstart', () => {
                 piezaSiendoArrastrada = pieza;
                 piezasFlotantes = piezasFlotantes.filter(p => p.element !== pieza);
             });
 
+            // Arrastre en Pantalla Táctil / Móvil
             pieza.addEventListener('touchstart', (e) => handleTouchStart(e, pieza), { passive: false });
             pieza.addEventListener('touchmove', handleTouchMove, { passive: false });
             pieza.addEventListener('touchend', (e) => handleTouchEnd(e, pieza));
 
-            const xInicial = Math.random() * (window.innerWidth - 120);
-            const yInicial = Math.random() * (window.innerHeight * 0.3) + 80;
+            const xInicial = Math.random() * (window.innerWidth - (tamanoPieza + 20));
+            const yInicial = Math.random() * (window.innerHeight * 0.25) + 60;
 
             liberarPiezaConGravedad(pieza, xInicial, yInicial);
         }
@@ -146,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let touchOffset = { x: 0, y: 0 };
 
     function handleTouchStart(e, pieza) {
-        e.preventDefault();
+        if (e.cancelable) e.preventDefault();
         piezaSiendoArrastrada = pieza;
         piezasFlotantes = piezasFlotantes.filter(p => p.element !== pieza);
 
@@ -157,11 +165,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         pieza.style.position = 'fixed';
         pieza.style.zIndex = '1000';
+        pieza.style.left = `${touch.clientX - touchOffset.x}px`;
+        pieza.style.top = `${touch.clientY - touchOffset.y}px`;
     }
 
     function handleTouchMove(e) {
         if (!piezaSiendoArrastrada) return;
-        e.preventDefault();
+        if (e.cancelable) e.preventDefault(); // Previene el scroll nativo de la pantalla
         const touch = e.touches[0];
         piezaSiendoArrastrada.style.left = `${touch.clientX - touchOffset.x}px`;
         piezaSiendoArrastrada.style.top = `${touch.clientY - touchOffset.y}px`;
@@ -172,14 +182,20 @@ document.addEventListener('DOMContentLoaded', () => {
         pieza.style.zIndex = '10';
         
         const touch = e.changedTouches[0];
+        
+        // Ocultamos temporalmente la pieza para detectar la casilla que está exactamente debajo del dedo
+        pieza.style.display = 'none';
         const elementoBajoCursor = document.elementFromPoint(touch.clientX, touch.clientY);
+        pieza.style.display = 'block';
+
         const espacioDestino = elementoBajoCursor ? elementoBajoCursor.closest('.espacio-puzzle') : null;
 
         if (espacioDestino) {
             colocarPiezaEnCasilla(pieza, espacioDestino);
         } else {
-            const posX = Math.max(10, Math.min(window.innerWidth - 110, touch.clientX - 50));
-            const posY = Math.max(80, Math.min(window.innerHeight - 150, touch.clientY - 50));
+            const tamano = pieza.offsetWidth || 80;
+            const posX = Math.max(10, Math.min(window.innerWidth - (tamano + 10), touch.clientX - (tamano / 2)));
+            const posY = Math.max(60, Math.min(window.innerHeight - (tamano + 10), touch.clientY - (tamano / 2)));
             liberarPiezaConGravedad(pieza, posX, posY);
         }
         piezaSiendoArrastrada = null;
@@ -196,9 +212,9 @@ document.addEventListener('DOMContentLoaded', () => {
             element: pieza,
             x: x,
             y: y,
-            velocidadY: 0.25 + Math.random() * 0.25,
+            velocidadY: 0.2 + Math.random() * 0.2,
             balanceo: Math.random() * Math.PI * 2,
-            velocidadBalanceo: 0.01 + Math.random() * 0.015
+            velocidadBalanceo: 0.01 + Math.random() * 0.01
         };
 
         piezasFlotantes = piezasFlotantes.filter(p => p.element !== pieza);
@@ -213,12 +229,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const oscilacionX = Math.sin(item.balanceo) * 0.4;
             item.x += oscilacionX;
 
-            if (item.x < 10) item.x = 10;
-            if (item.x > window.innerWidth - 110) item.x = window.innerWidth - 110;
+            const anchoPieza = item.element.offsetWidth || 80;
 
-            if (item.y > window.innerHeight - 120) {
-                item.y = -90;
-                item.x = Math.random() * (window.innerWidth - 120);
+            if (item.x < 5) item.x = 5;
+            if (item.x > window.innerWidth - (anchoPieza + 5)) item.x = window.innerWidth - (anchoPieza + 5);
+
+            if (item.y > window.innerHeight - (anchoPieza + 20)) {
+                item.y = -anchoPieza;
+                item.x = Math.random() * (window.innerWidth - (anchoPieza + 10));
             }
 
             item.element.style.top = `${item.y}px`;
@@ -261,6 +279,8 @@ document.addEventListener('DOMContentLoaded', () => {
         piezasFlotantes = piezasFlotantes.filter(p => p.element !== pieza);
         espacioDestino.appendChild(pieza);
         pieza.style.position = 'static';
+        pieza.style.width = '100%';
+        pieza.style.height = '100%';
         piezaSiendoArrastrada = null;
         
         verificarVictoriaPuzzle();
