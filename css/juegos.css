@@ -190,7 +190,7 @@
     border: 1px solid var(--primary-yellow);
 }
 
-/* TABLERO PUZZLE (ADAPTATIVO) */
+/* TABLERO PUZZLE (ADAPTATIVO Y RESPONSIVE) */
 .contenedor-juego {
     display: flex;
     justify-content: center;
@@ -232,11 +232,12 @@
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
     will-change: transform, top, left;
+    box-sizing: border-box;
     
-    /* SOLUCIÓN CLAVE: IMPIDE QUE LA FOTO SE REPITA */
+    /* PREVIENE REPETICIÓN Y DESBORDAMIENTO */
     background-repeat: no-repeat !important;
     
-    /* REGLAS PARA MÓVILES */
+    /* CONTROL TÁCTIL EN CELULARES */
     touch-action: none;
     -webkit-touch-callout: none;
     user-select: none;
@@ -263,9 +264,9 @@
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    border-radius: 0;
-    box-shadow: none;
-    border: none;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
     touch-action: auto;
 }
 

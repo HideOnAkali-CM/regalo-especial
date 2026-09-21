@@ -110,11 +110,11 @@ document.addEventListener('DOMContentLoaded', () => {
             tablero.appendChild(espacio);
         }
 
-        // Medir el espacio exacto de una casilla en la pantalla actual
+        // Medir el tamaño real de la casilla en pantalla
         const primerEspacio = tablero.querySelector('.espacio-puzzle');
-        const tamanoPieza = primerEspacio ? primerEspacio.clientWidth : 80;
+        const tamanoPieza = primerEspacio ? primerEspacio.getBoundingClientRect().width : 80;
 
-        // Crear las piezas con la escala perfecta para el celular
+        // Crear las piezas con escala precisa sin repetición de imagen
         for (let i = 0; i < FILAS * COLUMNAS; i++) {
             const pieza = document.createElement('div');
             pieza.classList.add('pieza-puzzle');
@@ -126,18 +126,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const columna = i % COLUMNAS;
             
             pieza.style.backgroundImage = `url("${fotoSeleccionada}")`;
+            pieza.style.backgroundRepeat = 'no-repeat';
             pieza.style.backgroundSize = `${COLUMNAS * tamanoPieza}px ${FILAS * tamanoPieza}px`;
             pieza.style.backgroundPosition = `${-columna * tamanoPieza}px ${-fila * tamanoPieza}px`;
             pieza.style.width = `${tamanoPieza}px`;
             pieza.style.height = `${tamanoPieza}px`;
 
-            // Arrastre en Mouse / Desktop
+            // Arrastre Desktop
             pieza.addEventListener('dragstart', () => {
                 piezaSiendoArrastrada = pieza;
                 piezasFlotantes = piezasFlotantes.filter(p => p.element !== pieza);
             });
 
-            // Arrastre en Pantalla Táctil / Móvil
+            // Arrastre Móvil
             pieza.addEventListener('touchstart', (e) => handleTouchStart(e, pieza), { passive: false });
             pieza.addEventListener('touchmove', handleTouchMove, { passive: false });
             pieza.addEventListener('touchend', (e) => handleTouchEnd(e, pieza));
@@ -277,11 +278,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         piezasFlotantes = piezasFlotantes.filter(p => p.element !== pieza);
         espacioDestino.appendChild(pieza);
+
+        // Recalcular dimensiones al encajar en casilla destino
+        const anchoCasilla = espacioDestino.clientWidth;
+        const indice = parseInt(pieza.dataset.indiceCorrecto, 10);
+        const fila = Math.floor(indice / COLUMNAS);
+        const columna = indice % COLUMNAS;
+
         pieza.style.position = 'absolute';
-        pieza.style.left = '0';
-        pieza.style.top = '0';
+        pieza.style.left = '0px';
+        pieza.style.top = '0px';
         pieza.style.width = '100%';
         pieza.style.height = '100%';
+        pieza.style.backgroundRepeat = 'no-repeat';
+        pieza.style.backgroundSize = `${COLUMNAS * anchoCasilla}px ${FILAS * anchoCasilla}px`;
+        pieza.style.backgroundPosition = `${-columna * anchoCasilla}px ${-fila * anchoCasilla}px`;
+        
         piezaSiendoArrastrada = null;
         
         verificarVictoriaPuzzle();
