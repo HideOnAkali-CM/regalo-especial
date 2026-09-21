@@ -190,7 +190,7 @@
     border: 1px solid var(--primary-yellow);
 }
 
-/* TABLERO PUZZLE (ADAPTATIVO Y RESPONSIVE) */
+/* TABLERO PUZZLE (ADAPTATIVO) */
 .contenedor-juego {
     display: flex;
     justify-content: center;
@@ -221,7 +221,6 @@
     border: 1px dashed rgba(244, 208, 63, 0.3);
     border-radius: 6px;
     overflow: hidden;
-    position: relative;
 }
 
 .pieza-puzzle {
@@ -230,14 +229,10 @@
     cursor: grab;
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
     will-change: transform, top, left;
-    box-sizing: border-box;
     
-    /* PREVIENE REPETICIÓN Y DESBORDAMIENTO */
-    background-repeat: no-repeat !important;
-    
-    /* CONTROL TÁCTIL EN CELULARES */
+    /* REGLAS CLAVE PARA PANTALLAS TÁCTILES */
     touch-action: none;
     -webkit-touch-callout: none;
     user-select: none;
@@ -259,14 +254,13 @@
 }
 
 .espacio-puzzle .pieza-puzzle {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
+    position: static !important;
+    animation: none !important;
+    transform: none !important;
+    box-shadow: none;
+    border-radius: 0;
     width: 100% !important;
     height: 100% !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    border: none !important;
     touch-action: auto;
 }
 
@@ -392,7 +386,7 @@
     to { transform: scale(1); }
 }
 
-/* RESPONSIVE PARA DISPOSITIVOS MÓVILES */
+/* MEDIA QUERIES PARA CELULARES Y DISPOSITIVOS PEQUEÑOS */
 @media (max-width: 600px) {
     .juego-header h2 {
         font-size: 1.5rem;
