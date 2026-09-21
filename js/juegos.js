@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // =========================================================
+    // ============================================================
     // 1. NAVEGACIÓN ENTRE PESTAÑAS
-    // =========================================================
+    // ============================================================
 
     const tabs = {
         puzzle: document.getElementById('btn-tab-rompecabezas'),
@@ -18,12 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function activarTab(nombre) {
 
-        Object.values(tabs).forEach(t => {
-            if (t) t.classList.remove('active');
+        Object.values(tabs).forEach(tab => {
+            if (tab) tab.classList.remove('active');
         });
 
-        Object.values(paneles).forEach(p => {
-            if (p) p.classList.remove('activo');
+        Object.values(paneles).forEach(panel => {
+            if (panel) panel.classList.remove('activo');
         });
 
         if (tabs[nombre]) {
@@ -34,15 +34,17 @@ document.addEventListener('DOMContentLoaded', () => {
             paneles[nombre].classList.add('activo');
         }
 
+        // Si salimos del puzzle
         if (nombre !== 'puzzle') {
 
             detenerFisicaPuzzle();
 
-            const contenedorPiezas =
-                document.getElementById('contenedor-piezas-libres');
+            const contenedor = document.getElementById(
+                'contenedor-piezas-libres'
+            );
 
-            if (contenedorPiezas) {
-                contenedorPiezas.innerHTML = '';
+            if (contenedor) {
+                contenedor.innerHTML = '';
             }
 
             document.body.ondragover = null;
@@ -57,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
             resetearReflejos();
         }
     }
-
 
     if (tabs.puzzle) {
         tabs.puzzle.addEventListener('click', () => {
@@ -78,12 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // =========================================================
-    // 2. JUEGO 1 - ROMPECABEZAS
-    // =========================================================
+    // ============================================================
+    // 2. ROMPECABEZAS
+    // ============================================================
 
-    const tablero =
-        document.getElementById('tablero');
+    const tablero = document.getElementById('tablero');
 
     const contenedorPiezasLibres =
         document.getElementById('contenedor-piezas-libres');
@@ -110,23 +110,23 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('pantalla-juego-puzzle');
 
 
+    // Configuración
     const FILAS = 3;
     const COLUMNAS = 3;
 
-
     let piezasFlotantes = [];
-
     let animacionFisicaFrame = null;
-
     let piezaSiendoArrastrada = null;
 
-    let fotoSeleccionada =
-        '../fotos/fotos1.jpg';
+    let fotoSeleccionada = '../fotos/fotos1.jpg';
+
+    // Tamaño real de las piezas
+    let tamanoPieza = 80;
 
 
-    // =========================================================
+    // ============================================================
     // SELECCIÓN DE FOTOS
-    // =========================================================
+    // ============================================================
 
     tarjetasFoto.forEach(tarjeta => {
 
@@ -138,16 +138,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             tarjeta.classList.add('active');
 
-            fotoSeleccionada =
-                tarjeta.dataset.foto;
+            fotoSeleccionada = tarjeta.dataset.foto;
         });
 
     });
 
 
-    // =========================================================
+    // ============================================================
     // COMENZAR PUZZLE
-    // =========================================================
+    // ============================================================
 
     if (btnComenzarPuzzle) {
 
@@ -167,12 +166,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             iniciarPuzzle();
         });
+
     }
 
 
-    // =========================================================
+    // ============================================================
     // CAMBIAR FOTO
-    // =========================================================
+    // ============================================================
 
     if (btnCambiarFoto) {
 
@@ -191,13 +191,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pantallaSeleccion) {
                 pantallaSeleccion.style.display = 'flex';
             }
+
         });
+
     }
 
 
-    // =========================================================
+    // ============================================================
     // INICIAR PUZZLE
-    // =========================================================
+    // ============================================================
 
     function iniciarPuzzle() {
 
@@ -212,17 +214,15 @@ document.addEventListener('DOMContentLoaded', () => {
         detenerFisicaPuzzle();
 
         tablero.innerHTML = '';
-
         contenedorPiezasLibres.innerHTML = '';
 
         piezasFlotantes = [];
-
         piezaSiendoArrastrada = null;
 
 
-        // -----------------------------------------------------
-        // DRAG & DROP DE COMPUTADOR
-        // -----------------------------------------------------
+        // --------------------------------------------------------
+        // DRAG DESKTOP
+        // --------------------------------------------------------
 
         document.body.ondragover = e => {
             e.preventDefault();
@@ -238,27 +238,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 !e.target.closest('.espacio-puzzle')
             ) {
 
-                const pieza =
-                    piezaSiendoArrastrada;
+                const pieza = piezaSiendoArrastrada;
 
-                restaurarTamanoPieza(pieza);
-
-                const tamano =
-                    pieza.offsetWidth || 80;
+                const ancho =
+                    pieza.dataset.tamano
+                        ? parseFloat(pieza.dataset.tamano)
+                        : tamanoPieza;
 
                 const posX = Math.max(
                     10,
                     Math.min(
-                        window.innerWidth - tamano - 10,
-                        e.clientX - tamano / 2
+                        window.innerWidth - ancho - 10,
+                        e.clientX - ancho / 2
                     )
                 );
 
                 const posY = Math.max(
                     60,
                     Math.min(
-                        window.innerHeight - tamano - 10,
-                        e.clientY - tamano / 2
+                        window.innerHeight - ancho - 10,
+                        e.clientY - ancho / 2
                     )
                 );
 
@@ -270,12 +269,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 piezaSiendoArrastrada = null;
             }
+
         };
 
 
-        // =====================================================
+        // --------------------------------------------------------
         // CREAR ESPACIOS DEL TABLERO
-        // =====================================================
+        // --------------------------------------------------------
 
         for (
             let i = 0;
@@ -286,50 +286,40 @@ document.addEventListener('DOMContentLoaded', () => {
             const espacio =
                 document.createElement('div');
 
-            espacio.classList.add(
-                'espacio-puzzle'
-            );
+            espacio.classList.add('espacio-puzzle');
 
             espacio.dataset.indice = i;
 
-
             espacio.addEventListener(
                 'dragover',
-                e => {
-                    e.preventDefault();
-                }
+                e => e.preventDefault()
             );
-
 
             espacio.addEventListener(
                 'drop',
                 soltarPiezaEnTablero
             );
 
-
             tablero.appendChild(espacio);
         }
 
 
-        // =====================================================
-        // CALCULAR TAMAÑO DE PIEZA
-        // =====================================================
+        // --------------------------------------------------------
+        // CALCULAR TAMAÑO REAL
+        // --------------------------------------------------------
 
         const primerEspacio =
-            tablero.querySelector(
-                '.espacio-puzzle'
-            );
+            tablero.querySelector('.espacio-puzzle');
 
-
-        const tamanoPieza =
+        tamanoPieza =
             primerEspacio
-                ? primerEspacio.clientWidth
+                ? primerEspacio.getBoundingClientRect().width
                 : 80;
 
 
-        // =====================================================
-        // CREAR LAS 9 PIEZAS
-        // =====================================================
+        // --------------------------------------------------------
+        // CREAR PIEZAS
+        // --------------------------------------------------------
 
         for (
             let i = 0;
@@ -340,106 +330,80 @@ document.addEventListener('DOMContentLoaded', () => {
             const pieza =
                 document.createElement('div');
 
-
-            pieza.classList.add(
-                'pieza-puzzle'
-            );
-
+            pieza.classList.add('pieza-puzzle');
 
             pieza.draggable = true;
 
+            pieza.id = `pieza-${i}`;
 
-            pieza.id =
-                `pieza-${i}`;
+            pieza.dataset.indiceCorrecto = i;
 
-
-            pieza.dataset.indiceCorrecto =
-                i;
+            // IMPORTANTE:
+            // Guardamos el tamaño original de la pieza.
+            pieza.dataset.tamano = tamanoPieza;
 
 
             const fila =
                 Math.floor(i / COLUMNAS);
 
-
             const columna =
                 i % COLUMNAS;
 
 
-            // -------------------------------------------------
-            // IMAGEN
-            // -------------------------------------------------
-
             pieza.style.backgroundImage =
                 `url("${fotoSeleccionada}")`;
-
 
             pieza.style.backgroundSize =
                 `${COLUMNAS * tamanoPieza}px ${FILAS * tamanoPieza}px`;
 
-
             pieza.style.backgroundPosition =
                 `${-columna * tamanoPieza}px ${-fila * tamanoPieza}px`;
 
-
             pieza.style.width =
                 `${tamanoPieza}px`;
-
 
             pieza.style.height =
                 `${tamanoPieza}px`;
 
 
-            pieza.dataset.tamano =
-                tamanoPieza;
-
-
-            // -------------------------------------------------
+            // ----------------------------------------------------
             // DRAG DESKTOP
-            // -------------------------------------------------
+            // ----------------------------------------------------
 
             pieza.addEventListener(
                 'dragstart',
                 () => {
 
-                    piezaSiendoArrastrada =
-                        pieza;
-
+                    piezaSiendoArrastrada = pieza;
 
                     piezasFlotantes =
                         piezasFlotantes.filter(
-                            p =>
-                                p.element !== pieza
+                            p => p.element !== pieza
                         );
 
-
-                    // IMPORTANTE:
-                    // Si estaba dentro del tablero
-                    // tenía width/height 100%.
-                    // Aquí recuperamos su tamaño.
-                    restaurarTamanoPieza(
-                        pieza
-                    );
+                    // Al comenzar a sacar una pieza,
+                    // restauramos su tamaño original.
+                    restaurarTamanoPieza(pieza);
                 }
             );
 
 
-            // -------------------------------------------------
-            // TOUCH MOBILE
-            // -------------------------------------------------
+            // ----------------------------------------------------
+            // TOUCH START
+            // ----------------------------------------------------
 
             pieza.addEventListener(
                 'touchstart',
-                e => {
-                    handleTouchStart(
-                        e,
-                        pieza
-                    );
-                },
+                e => handleTouchStart(e, pieza),
                 {
                     passive: false
                 }
             );
 
+
+            // ----------------------------------------------------
+            // TOUCH MOVE
+            // ----------------------------------------------------
 
             pieza.addEventListener(
                 'touchmove',
@@ -450,23 +414,18 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
 
+            // ----------------------------------------------------
+            // TOUCH END
+            // ----------------------------------------------------
+
             pieza.addEventListener(
                 'touchend',
-                e => {
-                    handleTouchEnd(
-                        e,
-                        pieza
-                    );
-                }
+                e => handleTouchEnd(e, pieza)
             );
 
 
-            // -------------------------------------------------
-            // POSICIÓN INICIAL
-            // -------------------------------------------------
-
-            const xInicial =
-                Math.random() *
+            // Posición inicial
+            const maxX =
                 Math.max(
                     10,
                     window.innerWidth -
@@ -474,6 +433,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     20
                 );
 
+            const xInicial =
+                Math.random() * maxX;
 
             const yInicial =
                 Math.random() *
@@ -493,9 +454,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // =========================================================
-    // VARIABLE PARA TOUCH
-    // =========================================================
+    // ============================================================
+    // RESTAURAR TAMAÑO ORIGINAL
+    // ============================================================
+    // ESTA FUNCIÓN SOLUCIONA EL PROBLEMA DE LA FOTO
+    // ============================================================
+
+    function restaurarTamanoPieza(pieza) {
+
+        const tamano =
+            parseFloat(
+                pieza.dataset.tamano
+            ) || tamanoPieza;
+
+        pieza.style.width =
+            `${tamano}px`;
+
+        pieza.style.height =
+            `${tamano}px`;
+
+        pieza.style.position =
+            'fixed';
+
+        pieza.style.backgroundSize =
+            `${COLUMNAS * tamano}px ${FILAS * tamano}px`;
+
+        pieza.style.boxSizing =
+            'border-box';
+
+        pieza.style.margin =
+            '0';
+
+    }
+
+
+    // ============================================================
+    // TOUCH
+    // ============================================================
 
     let touchOffset = {
         x: 0,
@@ -503,121 +498,32 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
-    // =========================================================
-    // RESTAURAR TAMAÑO DE PIEZA
-    // =========================================================
-    //
-    // ESTA ES LA CORRECCIÓN PRINCIPAL DEL PROBLEMA MÓVIL.
-    //
-    // Cuando una pieza está dentro del tablero usamos:
-    //
-    // width: 100%;
-    // height: 100%;
-    //
-    // Al sacarla debemos volver a poner su tamaño real.
-    // =========================================================
-
-    function restaurarTamanoPieza(pieza) {
-
-        if (!pieza) {
-            return;
-        }
-
-
-        let tamano =
-            parseFloat(
-                pieza.dataset.tamano
-            );
-
-
-        // Si no tenemos el tamaño guardado,
-        // lo calculamos desde el tablero.
-        if (
-            !tamano ||
-            !isFinite(tamano)
-        ) {
-
-            const espacio =
-                tablero
-                    ? tablero.querySelector(
-                        '.espacio-puzzle'
-                    )
-                    : null;
-
-
-            tamano =
-                espacio
-                    ? espacio.clientWidth
-                    : 80;
-        }
-
-
-        pieza.style.width =
-            `${tamano}px`;
-
-
-        pieza.style.height =
-            `${tamano}px`;
-
-
-        pieza.style.backgroundSize =
-            `${COLUMNAS * tamano}px ${FILAS * tamano}px`;
-
-
-        const indice =
-            parseInt(
-                pieza.dataset.indiceCorrecto,
-                10
-            );
-
-
-        if (!isNaN(indice)) {
-
-            const fila =
-                Math.floor(
-                    indice / COLUMNAS
-                );
-
-
-            const columna =
-                indice % COLUMNAS;
-
-
-            pieza.style.backgroundPosition =
-                `${-columna * tamano}px ${-fila * tamano}px`;
-        }
-    }
-
-
-    // =========================================================
-    // TOUCH START
-    // =========================================================
-
     function handleTouchStart(e, pieza) {
 
         if (e.cancelable) {
             e.preventDefault();
         }
 
-
-        piezaSiendoArrastrada =
-            pieza;
+        piezaSiendoArrastrada = pieza;
 
 
-        // Sacar de la física
+        // Sacamos la pieza de la física
         piezasFlotantes =
             piezasFlotantes.filter(
-                p =>
-                    p.element !== pieza
+                p => p.element !== pieza
             );
+
+
+        // IMPORTANTE:
+        // Si estaba dentro de una casilla,
+        // tenía width/height: 100%.
+        // Lo devolvemos a su tamaño real.
+        restaurarTamanoPieza(pieza);
 
 
         const touch =
             e.touches[0];
 
-
-        // Guardar posición antes de cambiar
-        // position.
         const rect =
             pieza.getBoundingClientRect();
 
@@ -626,45 +532,25 @@ document.addEventListener('DOMContentLoaded', () => {
             touch.clientX -
             rect.left;
 
-
         touchOffset.y =
             touch.clientY -
             rect.top;
 
 
-        // =====================================================
-        // CORRECCIÓN DEL TAMAÑO
-        // =====================================================
-
-        restaurarTamanoPieza(
-            pieza
-        );
-
-
-        // =====================================================
-        // POSICIÓN FIJA PARA MOVER CON EL DEDO
-        // =====================================================
-
         pieza.style.position =
             'fixed';
-
 
         pieza.style.zIndex =
             '1000';
 
-
         pieza.style.left =
             `${touch.clientX - touchOffset.x}px`;
 
-
         pieza.style.top =
             `${touch.clientY - touchOffset.y}px`;
+
     }
 
-
-    // =========================================================
-    // TOUCH MOVE
-    // =========================================================
 
     function handleTouchMove(e) {
 
@@ -672,28 +558,60 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-
         if (e.cancelable) {
             e.preventDefault();
         }
-
 
         const touch =
             e.touches[0];
 
 
-        piezaSiendoArrastrada.style.left =
-            `${touch.clientX - touchOffset.x}px`;
+        const pieza =
+            piezaSiendoArrastrada;
 
 
-        piezaSiendoArrastrada.style.top =
-            `${touch.clientY - touchOffset.y}px`;
+        const tamano =
+            parseFloat(
+                pieza.dataset.tamano
+            ) || tamanoPieza;
+
+
+        let x =
+            touch.clientX -
+            touchOffset.x;
+
+        let y =
+            touch.clientY -
+            touchOffset.y;
+
+
+        // Evitar que la pieza salga de la pantalla
+        x = Math.max(
+            0,
+            Math.min(
+                window.innerWidth -
+                tamano,
+                x
+            )
+        );
+
+        y = Math.max(
+            0,
+            Math.min(
+                window.innerHeight -
+                tamano,
+                y
+            )
+        );
+
+
+        pieza.style.left =
+            `${x}px`;
+
+        pieza.style.top =
+            `${y}px`;
     }
 
-
-    // =========================================================
-    // TOUCH END
-    // =========================================================
 
     function handleTouchEnd(e, pieza) {
 
@@ -706,15 +624,8 @@ document.addEventListener('DOMContentLoaded', () => {
             e.changedTouches[0];
 
 
-        pieza.style.zIndex =
-            '1000';
-
-
-        // -----------------------------------------------------
-        // Ocultar temporalmente la pieza para detectar
-        // qué hay debajo del dedo.
-        // -----------------------------------------------------
-
+        // Ocultamos temporalmente la pieza
+        // para detectar correctamente qué casilla está debajo.
         pieza.style.display =
             'none';
 
@@ -738,10 +649,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 : null;
 
 
-        // -----------------------------------------------------
-        // SI SOLTÓ SOBRE UNA CASILLA
-        // -----------------------------------------------------
-
         if (espacioDestino) {
 
             colocarPiezaEnCasilla(
@@ -749,25 +656,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 espacioDestino
             );
 
-        }
-
-        // -----------------------------------------------------
-        // SI SOLTÓ FUERA DEL TABLERO
-        // -----------------------------------------------------
-
-        else {
-
-            restaurarTamanoPieza(
-                pieza
-            );
-
+        } else {
 
             const tamano =
-                pieza.offsetWidth ||
                 parseFloat(
                     pieza.dataset.tamano
-                ) ||
-                80;
+                ) || tamanoPieza;
 
 
             const posX =
@@ -778,7 +672,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         tamano -
                         10,
                         touch.clientX -
-                        touchOffset.x
+                        tamano / 2
                     )
                 );
 
@@ -791,7 +685,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         tamano -
                         10,
                         touch.clientY -
-                        touchOffset.y
+                        tamano / 2
                     )
                 );
 
@@ -809,9 +703,134 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // =========================================================
-    // LIBERAR PIEZA CON FÍSICA
-    // =========================================================
+    // ============================================================
+    // SOLTAR PIEZA EN TABLERO
+    // ============================================================
+
+    function soltarPiezaEnTablero(e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+
+        const pieza =
+            piezaSiendoArrastrada;
+
+
+        if (!pieza) {
+            return;
+        }
+
+
+        const espacioDestino =
+            e.target.closest(
+                '.espacio-puzzle'
+            );
+
+
+        if (espacioDestino) {
+
+            colocarPiezaEnCasilla(
+                pieza,
+                espacioDestino
+            );
+        }
+    }
+
+
+    // ============================================================
+    // COLOCAR PIEZA EN CASILLA
+    // ============================================================
+
+    function colocarPiezaEnCasilla(
+        pieza,
+        espacioDestino
+    ) {
+
+        // --------------------------------------------------------
+        // SI YA HAY UNA PIEZA
+        // --------------------------------------------------------
+
+        if (
+            espacioDestino.children.length > 0
+        ) {
+
+            const piezaExistente =
+                espacioDestino.firstElementChild;
+
+
+            if (
+                piezaExistente &&
+                piezaExistente !== pieza
+            ) {
+
+                // Guardamos la posición ANTES
+                // de sacar la pieza.
+                const rect =
+                    espacioDestino.getBoundingClientRect();
+
+
+                // IMPORTANTE:
+                // La pieza existente vuelve a ser
+                // una pieza flotante normal.
+                liberarPiezaConGravedad(
+                    piezaExistente,
+                    rect.left,
+                    rect.top
+                );
+            }
+        }
+
+
+        // --------------------------------------------------------
+        // QUITAR LA PIEZA DE LA FÍSICA
+        // --------------------------------------------------------
+
+        piezasFlotantes =
+            piezasFlotantes.filter(
+                p => p.element !== pieza
+            );
+
+
+        // --------------------------------------------------------
+        // COLOCAR EN LA CASILLA
+        // --------------------------------------------------------
+
+        espacioDestino.appendChild(
+            pieza
+        );
+
+
+        pieza.style.position =
+            'absolute';
+
+        pieza.style.left =
+            '0px';
+
+        pieza.style.top =
+            '0px';
+
+        pieza.style.width =
+            '100%';
+
+        pieza.style.height =
+            '100%';
+
+        pieza.style.zIndex =
+            '2';
+
+
+        piezaSiendoArrastrada =
+            null;
+
+
+        verificarVictoriaPuzzle();
+    }
+
+
+    // ============================================================
+    // LIBERAR PIEZA
+    // ============================================================
 
     function liberarPiezaConGravedad(
         pieza,
@@ -819,18 +838,26 @@ document.addEventListener('DOMContentLoaded', () => {
         y
     ) {
 
-        // =====================================================
-        // MUY IMPORTANTE:
-        // Restaurar tamaño ANTES de agregarla
-        // al contenedor flotante.
-        // =====================================================
+        if (!pieza || !contenedorPiezasLibres) {
+            return;
+        }
 
-        restaurarTamanoPieza(
+
+        // --------------------------------------------------------
+        // QUITAR DE CUALQUIER CASILLA
+        // --------------------------------------------------------
+
+        contenedorPiezasLibres.appendChild(
             pieza
         );
 
 
-        contenedorPiezasLibres.appendChild(
+        // --------------------------------------------------------
+        // MUY IMPORTANTE:
+        // RESTAURAR EL TAMAÑO ORIGINAL
+        // --------------------------------------------------------
+
+        restaurarTamanoPieza(
             pieza
         );
 
@@ -838,22 +865,28 @@ document.addEventListener('DOMContentLoaded', () => {
         pieza.style.animation =
             'none';
 
-
         pieza.style.position =
             'fixed';
-
 
         pieza.style.left =
             `${x}px`;
 
-
         pieza.style.top =
             `${y}px`;
-
 
         pieza.style.zIndex =
             '10';
 
+
+        const tamano =
+            parseFloat(
+                pieza.dataset.tamano
+            ) || tamanoPieza;
+
+
+        // --------------------------------------------------------
+        // CREAR OBJETO FÍSICO
+        // --------------------------------------------------------
 
         const objetoFisico = {
 
@@ -865,7 +898,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             velocidadY:
                 0.2 +
-                Math.random() * 0.2,
+                Math.random() *
+                0.2,
 
             balanceo:
                 Math.random() *
@@ -881,8 +915,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         piezasFlotantes =
             piezasFlotantes.filter(
-                p =>
-                    p.element !== pieza
+                p => p.element !== pieza
             );
 
 
@@ -892,94 +925,97 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // =========================================================
-    // FÍSICA
-    // =========================================================
+    // ============================================================
+    // FÍSICA DE LAS PIEZAS
+    // ============================================================
 
     function loopFisica() {
 
-        piezasFlotantes.forEach(
-            item => {
+        piezasFlotantes.forEach(item => {
 
-                item.y +=
-                    item.velocidadY;
-
-
-                item.balanceo +=
-                    item.velocidadBalanceo;
-
-
-                const oscilacionX =
-                    Math.sin(
-                        item.balanceo
-                    ) * 0.4;
+            if (
+                !item.element ||
+                !item.element.parentElement
+            ) {
+                return;
+            }
 
 
-                item.x +=
-                    oscilacionX;
+            item.y +=
+                item.velocidadY;
 
 
-                const anchoPieza =
-                    item.element.offsetWidth ||
-                    parseFloat(
-                        item.element.dataset.tamano
-                    ) ||
-                    80;
+            item.balanceo +=
+                item.velocidadBalanceo;
 
 
-                // Límite izquierdo
-                if (item.x < 5) {
-                    item.x = 5;
-                }
+            const oscilacionX =
+                Math.sin(
+                    item.balanceo
+                ) * 0.4;
 
 
-                // Límite derecho
-                if (
-                    item.x >
+            item.x +=
+                oscilacionX;
+
+
+            const anchoPieza =
+                parseFloat(
+                    item.element.dataset.tamano
+                ) || tamanoPieza;
+
+
+            // Limite izquierdo
+            if (item.x < 5) {
+                item.x = 5;
+            }
+
+
+            // Limite derecho
+            if (
+                item.x >
+                window.innerWidth -
+                anchoPieza -
+                5
+            ) {
+
+                item.x =
                     window.innerWidth -
                     anchoPieza -
-                    5
-                ) {
+                    5;
+            }
 
-                    item.x =
+
+            // Cuando llega abajo,
+            // vuelve arriba.
+            if (
+                item.y >
+                window.innerHeight -
+                anchoPieza -
+                20
+            ) {
+
+                item.y =
+                    -anchoPieza;
+
+
+                item.x =
+                    Math.random() *
+                    Math.max(
+                        10,
                         window.innerWidth -
                         anchoPieza -
-                        5;
-                }
-
-
-                // Cuando llega abajo,
-                // vuelve a aparecer arriba.
-                if (
-                    item.y >
-                    window.innerHeight -
-                    anchoPieza -
-                    20
-                ) {
-
-                    item.y =
-                        -anchoPieza;
-
-
-                    item.x =
-                        Math.random() *
-                        Math.max(
-                            10,
-                            window.innerWidth -
-                            anchoPieza -
-                            10
-                        );
-                }
-
-
-                item.element.style.top =
-                    `${item.y}px`;
-
-
-                item.element.style.left =
-                    `${item.x}px`;
+                        10
+                    );
             }
-        );
+
+
+            item.element.style.top =
+                `${item.y}px`;
+
+            item.element.style.left =
+                `${item.x}px`;
+        });
 
 
         animacionFisicaFrame =
@@ -989,9 +1025,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // =========================================================
+    // ============================================================
     // DETENER FÍSICA
-    // =========================================================
+    // ============================================================
 
     function detenerFisicaPuzzle() {
 
@@ -1010,146 +1046,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // =========================================================
-    // SOLTAR PIEZA EN TABLERO - DESKTOP
-    // =========================================================
-
-    function soltarPiezaEnTablero(e) {
-
-        e.preventDefault();
-
-        e.stopPropagation();
-
-
-        const piezaArrastrada =
-            piezaSiendoArrastrada;
-
-
-        if (!piezaArrastrada) {
-            return;
-        }
-
-
-        const espacioDestino =
-            e.target.closest(
-                '.espacio-puzzle'
-            );
-
-
-        if (espacioDestino) {
-
-            colocarPiezaEnCasilla(
-                piezaArrastrada,
-                espacioDestino
-            );
-        }
-    }
-
-
-    // =========================================================
-    // COLOCAR PIEZA EN CASILLA
-    // =========================================================
-
-    function colocarPiezaEnCasilla(
-        pieza,
-        espacioDestino
-    ) {
-
-        // -----------------------------------------------------
-        // Si ya hay una pieza en esa casilla,
-        // la sacamos.
-        // -----------------------------------------------------
-
-        if (
-            espacioDestino.children.length > 0
-        ) {
-
-            const piezaExistente =
-                espacioDestino.firstChild;
-
-
-            if (
-                piezaExistente !== pieza
-            ) {
-
-                const rect =
-                    espacioDestino.getBoundingClientRect();
-
-
-                // Restaurar tamaño antes
-                // de convertirla en flotante.
-                restaurarTamanoPieza(
-                    piezaExistente
-                );
-
-
-                liberarPiezaConGravedad(
-                    piezaExistente,
-                    rect.left,
-                    rect.top
-                );
-            }
-        }
-
-
-        // Quitar de la física
-        piezasFlotantes =
-            piezasFlotantes.filter(
-                p =>
-                    p.element !== pieza
-            );
-
-
-        // Colocar dentro de la casilla
-        espacioDestino.appendChild(
-            pieza
-        );
-
-
-        // =====================================================
-        // DENTRO DEL TABLERO SÍ QUEREMOS 100%
-        // =====================================================
-
-        pieza.style.position =
-            'absolute';
-
-
-        pieza.style.left =
-            '0';
-
-
-        pieza.style.top =
-            '0';
-
-
-        pieza.style.width =
-            '100%';
-
-
-        pieza.style.height =
-            '100%';
-
-
-        pieza.style.zIndex =
-            '10';
-
-
-        piezaSiendoArrastrada =
-            null;
-
-
-        verificarVictoriaPuzzle();
-    }
-
-
-    // =========================================================
+    // ============================================================
     // COMPROBAR VICTORIA
-    // =========================================================
+    // ============================================================
 
     function verificarVictoriaPuzzle() {
 
         const espacios =
-            document.querySelectorAll(
+            tablero.querySelectorAll(
                 '.espacio-puzzle'
             );
 
@@ -1157,23 +1061,26 @@ document.addEventListener('DOMContentLoaded', () => {
         let completado = true;
 
 
-        espacios.forEach(
-            espacio => {
+        espacios.forEach(espacio => {
 
-                const pieza =
-                    espacio.firstChild;
+            const pieza =
+                espacio.firstElementChild;
 
 
-                if (
-                    !pieza ||
-                    pieza.dataset.indiceCorrecto !=
+            if (
+                !pieza ||
+                Number(
+                    pieza.dataset.indiceCorrecto
+                ) !==
+                Number(
                     espacio.dataset.indice
-                ) {
+                )
+            ) {
 
-                    completado = false;
-                }
+                completado = false;
             }
-        );
+
+        });
 
 
         if (completado) {
@@ -1192,9 +1099,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // =========================================================
+    // ============================================================
     // REINICIAR PUZZLE
-    // =========================================================
+    // ============================================================
 
     if (btnReiniciarPuzzle) {
 
@@ -1205,27 +1112,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // =========================================================
+
+    // ============================================================
     // 3. JUEGO DE MEMORIA
-    // =========================================================
+    // ============================================================
 
     const gridMemoria =
         document.getElementById(
             'grid-memoria'
         );
 
-
     const txtMovimientos =
         document.getElementById(
             'movimientos-memoria'
         );
 
-
     const txtPares =
         document.getElementById(
             'pares-memoria'
         );
-
 
     const btnReiniciarMemoria =
         document.getElementById(
@@ -1267,16 +1172,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         cartasMemoria =
-            [...EMOJIS, ...EMOJIS]
-                .sort(
-                    () =>
-                        Math.random() - 0.5
-                );
+            [
+                ...EMOJIS,
+                ...EMOJIS
+            ].sort(
+                () => Math.random() - 0.5
+            );
 
 
         movimientos = 0;
 
         paresEncontrados = 0;
+
+        primeraCarta = null;
+
+        segundaCarta = null;
+
+        bloqueado = false;
 
 
         if (txtMovimientos) {
@@ -1289,13 +1201,6 @@ document.addEventListener('DOMContentLoaded', () => {
             txtPares.textContent =
                 `0 / ${EMOJIS.length}`;
         }
-
-
-        primeraCarta = null;
-
-        segundaCarta = null;
-
-        bloqueado = false;
 
 
         cartasMemoria.forEach(
@@ -1315,10 +1220,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 carta.dataset.emoji =
                     emoji;
 
-
                 carta.dataset.index =
                     index;
-
 
                 carta.textContent =
                     '❓';
@@ -1374,7 +1277,6 @@ document.addEventListener('DOMContentLoaded', () => {
             segundaCarta =
                 carta;
 
-
             movimientos++;
 
 
@@ -1400,7 +1302,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 'emparejada'
             );
 
-
             segundaCarta.classList.add(
                 'emparejada'
             );
@@ -1410,7 +1311,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
             if (txtPares) {
-
                 txtPares.textContent =
                     `${paresEncontrados} / ${EMOJIS.length}`;
             }
@@ -1445,7 +1345,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     primeraCarta.textContent =
                         '❓';
 
-
                     primeraCarta.classList.remove(
                         'revelada'
                     );
@@ -1456,7 +1355,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     segundaCarta.textContent =
                         '❓';
-
 
                     segundaCarta.classList.remove(
                         'revelada'
@@ -1490,27 +1388,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // =========================================================
+
+    // ============================================================
     // 4. JUEGO DE REFLEJOS
-    // =========================================================
+    // ============================================================
 
     const areaReflejos =
         document.getElementById(
             'area-reflejos'
         );
 
-
     const txtScore =
         document.getElementById(
             'score-reflejos'
         );
 
-
     const txtTiempo =
         document.getElementById(
             'tiempo-reflejos'
         );
-
 
     const btnIniciarReflejos =
         document.getElementById(
@@ -1528,10 +1424,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let juegoActivo = false;
 
-
-    // =========================================================
-    // RESETEAR REFLEJOS
-    // =========================================================
 
     function resetearReflejos() {
 
@@ -1567,10 +1459,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             areaReflejos.innerHTML = `
                 <p>
-                    Haz clic en "Iniciar Juego"
-                    para atrapar la mayor cantidad
-                    de flores antes de que se acabe
-                    el tiempo.
+                    Haz clic en "Iniciar Juego" para atrapar
+                    la mayor cantidad de flores antes de que
+                    se acabe el tiempo.
                 </p>
             `;
         }
@@ -1582,10 +1473,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
-    // =========================================================
-    // INICIAR REFLEJOS
-    // =========================================================
 
     function iniciarReflejos() {
 
@@ -1601,8 +1488,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         if (areaReflejos) {
-            areaReflejos.innerHTML =
-                '';
+            areaReflejos.innerHTML = '';
         }
 
 
@@ -1636,10 +1522,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // =========================================================
-    // APARECER FLOR
-    // =========================================================
-
     function aparecerFlor() {
 
         if (
@@ -1670,22 +1552,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const maxX =
             Math.max(
                 0,
-                areaReflejos.clientWidth -
-                50
+                areaReflejos.clientWidth - 50
             );
 
 
         const maxY =
             Math.max(
                 0,
-                areaReflejos.clientHeight -
-                50
+                areaReflejos.clientHeight - 50
             );
 
 
         flor.style.left =
             `${Math.random() * maxX}px`;
-
 
         flor.style.top =
             `${Math.random() * maxY}px`;
@@ -1700,17 +1579,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
 
-                if (
-                    flor.textContent ===
-                    '⭐'
-                ) {
-
-                    score += 3;
-
-                } else {
-
-                    score += 1;
-                }
+                score +=
+                    flor.textContent === '⭐'
+                        ? 3
+                        : 1;
 
 
                 if (txtScore) {
@@ -1739,10 +1611,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // =========================================================
-    // FINALIZAR REFLEJOS
-    // =========================================================
-
     function finalizarReflejos() {
 
         juegoActivo = false;
@@ -1751,7 +1619,6 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(
             intervaloTiempo
         );
-
 
         clearInterval(
             intervaloSpawn
@@ -1762,15 +1629,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             areaReflejos.innerHTML = `
                 <p>
-                    ¡Tiempo agotado! ⏱️
+                    <strong>
+                        ¡Tiempo agotado! ⏱️
+                    </strong>
                 </p>
 
                 <p>
                     Puntuación final:
-                    <strong>
-                        ${score}
-                    </strong>
-                    puntos
+                    ${score} puntos
                 </p>
             `;
         }
