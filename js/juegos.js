@@ -110,11 +110,11 @@ document.addEventListener('DOMContentLoaded', () => {
             tablero.appendChild(espacio);
         }
 
-        // Obtener el tamaño exacto del espacio en pantalla (pantallas táctiles y escritorio)
+        // Medir el espacio exacto de una casilla en la pantalla actual
         const primerEspacio = tablero.querySelector('.espacio-puzzle');
         const tamanoPieza = primerEspacio ? primerEspacio.clientWidth : 80;
 
-        // Crear las piezas con escala dinámica
+        // Crear las piezas con la escala perfecta para el celular
         for (let i = 0; i < FILAS * COLUMNAS; i++) {
             const pieza = document.createElement('div');
             pieza.classList.add('pieza-puzzle');
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleTouchMove(e) {
         if (!piezaSiendoArrastrada) return;
-        if (e.cancelable) e.preventDefault(); // Previene el scroll nativo de la pantalla
+        if (e.cancelable) e.preventDefault();
         const touch = e.touches[0];
         piezaSiendoArrastrada.style.left = `${touch.clientX - touchOffset.x}px`;
         piezaSiendoArrastrada.style.top = `${touch.clientY - touchOffset.y}px`;
@@ -183,7 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const touch = e.changedTouches[0];
         
-        // Ocultamos temporalmente la pieza para detectar la casilla que está exactamente debajo del dedo
         pieza.style.display = 'none';
         const elementoBajoCursor = document.elementFromPoint(touch.clientX, touch.clientY);
         pieza.style.display = 'block';
@@ -278,7 +277,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         piezasFlotantes = piezasFlotantes.filter(p => p.element !== pieza);
         espacioDestino.appendChild(pieza);
-        pieza.style.position = 'static';
+        pieza.style.position = 'absolute';
+        pieza.style.left = '0';
+        pieza.style.top = '0';
         pieza.style.width = '100%';
         pieza.style.height = '100%';
         piezaSiendoArrastrada = null;
